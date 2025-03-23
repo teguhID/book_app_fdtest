@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 use App\Models\Books;
@@ -12,71 +13,99 @@ class BooksController extends Controller
 {
     public function __construct() {}
 
-    function list()
+    function index()
     {
-        $data = Books::all();
-        return view('admin.master.role.list')->with('data', $data);
+        $data = Books::orderby('updated_at', 'DESC')->get();
+        return view('books.index')->with('data', $data);
     }
 
-    function add_view()
-    {
-        return view('admin.master.role.add');
-    }
-
-    function detail()
-    {
-        return view('admin.master.role.detail');
-    }
-
-    function post(Request $request)
+    function add(Request $request)
     {
         try {
+            $imagePath = '';
+
+            if ($request->hasFile('image')) {
+                $imageName = time() . '.' . $request->image->extension();
+                $request->image->storeAs('images', $imageName, 'public');
+                $imagePath = 'images/' . $imageName;
+            }
+
             $data = [
-                'name' => $request->name,
-                'desc' => $request->desc,
+                'cover' => $imagePath ? $imagePath : '',
+                'title' => $request->title,
+                'author' => $request->author,
+                'description' => $request->description,
+                'rating' => $request->rating,
             ];
 
             Books::create($data);
-            session()->flash('success', 'Data berhasil ditambahkan');
+            session()->flash('success', 'Data add successfully');
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
 
-        return redirect()->route('admin.master.role.list');
+        return redirect()->route('books');
     }
 
-    function edit_view($id_role)
+    function detail($id_books)
     {
-        $data = Books::where('id_role', $id_role)->first();
-        return view('admin.master.role.ubah')->with('data', $data);
+        $data = [];
+
+        try {
+            $data = Books::where('id_books', $id_books)->first();
+        } catch (\Exception $e) {
+            $data = [];
+        }
+
+        return $data;
     }
 
-    function edit(Request $request, $id_role)
+    function edit(Request $request, $id_books)
     {
         try {
+
             $data = [
-                'name' => $request->name,
-                'desc' => $request->desc,
+                'title' => $request->title,
+                'author' => $request->author,
+                'description' => $request->description,
+                'rating' => $request->rating,
             ];
 
-            Books::where('id_role', $id_role)->update($data);
-            session()->flash('success', 'Data berhasil diubah');
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+
+                $book = Books::findOrFail($id_books);
+
+                Storage::disk('public')->delete($book->cover);
+
+                $imageName = time() . '.' . $request->image->extension();
+                $request->image->storeAs('images', $imageName, 'public');
+                $imagePath = 'images/' . $imageName;
+
+                $data['cover'] = $imagePath;
+            }
+
+            Books::where('id_books', $id_books)->update($data);
+            session()->flash('success', 'Data update successfully');
         } catch (\Exception $e) {
+            return $e->getMessage();
             session()->flash('error', $e->getMessage());
         }
 
-        return redirect()->route('admin.master.role.list');
+        return redirect()->route('books');
     }
 
-    function delete($id_role)
+    function delete(Request $request, $id_books)
     {
         try {
-            Books::where('id_role', $id_role)->delete();
-            session()->flash('success', 'Data berhasil dihapus');
+            $book = Books::findOrFail($id_books);
+            Storage::disk('public')->delete($book->cover);
+
+            Books::where('id_books', $id_books)->delete();
+            session()->flash('success', 'Data delete successfully');
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
 
-        return redirect()->route('admin.master.role.list');
+        return redirect()->route('books');
     }
 }

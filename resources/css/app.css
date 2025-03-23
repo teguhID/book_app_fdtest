@@ -5,3 +5,58 @@
 [x-cloak] {
     display: none;
 }
+
+@media (max-width: 640px) {
+    table {
+      display: block;
+    }
+    
+    .responsive-table {
+      overflow-x: auto;
+    }
+    
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+.modal-content {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+.modal.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.w-100 {
+    width: 100px;
+}
+
+table.dataTable thead th {
+    text-align: center;
+}
+
+table.dataTable th.dt-type-numeric,table.dataTable th.dt-type-date,table.dataTable td.dt-type-numeric,table.dataTable td.dt-type-date {
+    text-align: center;
+}
+
+div.dt-container select.dt-input {
+    background-size: 15px;
+    background-position: right .5rem;
+}
+
+.column-filter {
+    border: 1px solid #19140035;
+    border-radius: 5px;
+    width: 100%;
+    height: 40px;
+    font-size: 13px;
+}

@@ -12,6 +12,9 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
+        
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Styles -->
@@ -22,18 +25,12 @@
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @livewire('navigation-menu')
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
             <!-- Page Content -->
             <main>
+
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+                
                 {{ $slot }}
             </main>
         </div>

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('author');
             $table->string('description');
-            $table->int('rating');
+            $table->float('rating', 1, 1);
             $table->timestamps();
         });
     }
