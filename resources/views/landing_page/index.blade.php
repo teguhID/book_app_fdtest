@@ -125,8 +125,14 @@
             </section>
 
             <!-- Results Count and Pagination Info -->
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Book Collection</h2>
+            <div class="flex justify-between items-center mb-6 mt-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex justify-between items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                    </svg>
+                    &nbsp;
+                    Book Collection
+                </h2>
                 <div class="text-sm text-gray-600">
                     Showing {{ $books->firstItem() ?? 0 }} to {{ $books->lastItem() ?? 0 }} of {{ $books->total() }} books
                 </div>
@@ -136,25 +142,28 @@
             @if($books->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
                 @foreach($books as $book)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">
-                    <div class="relative pb-2/3 h-48">
+
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         @if ($book->cover != '' || $book->cover != null || $book->cover || !empty($book->cover) )
-                            <img src="{{asset('/storage/' . $book->cover)}}" width="100">    
+                            <img src="{{asset('/storage/' . $book->cover)}}" class="w-full h-60 object-cover">    
                         @else
-                            <img src="https://store.bookbaby.com/BookShop/CommonControls/BookshopThemes/bookshop/OnePageBookCoverImage.jpg?BookID=BK90023891&abOnly=False&ImageType=Back" width="100">   
+                            <img src="https://store.bookbaby.com/BookShop/CommonControls/BookshopThemes/bookshop/OnePageBookCoverImage.jpg?BookID=BK90023891&abOnly=False&ImageType=Back" class="w-full h-60 object-cover">   
                         @endif
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-center mb-2">
-                            Rating<span class="text-sm text-gray-600 ml-1">({{ $book->rating }})</span>
+                        <div class="p-4">
+                            <h2 class="text-lg font-semibold text-gray-800">{{ $book->title }}</h2>
+                            <p class="text-sm text-gray-600">Author: {{ $book->author }}</p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                {{ $book->description ?? 'No description available.' }}
+                            </p>
+                            <div class="flex items-center mt-3">
+                                <span class="text-yellow-500 text-lg">⭐ {{ $book->rating }}</span>
+                            </div>
+                            <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                                Detail
+                            </button>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 line-clamp-1 mb-1">{{ $book->title }}</h3>
-                        <p class="text-sm text-gray-600 mb-3">by {{ $book->author }}</p>
-                        <div class="line-clamp-3 text-sm text-gray-700 mb-4 h-16">
-                            {{ $book->description ?? 'No description available.' }}
-                        </div>
                     </div>
-                </div>
+
                 @endforeach
             </div>
             @else

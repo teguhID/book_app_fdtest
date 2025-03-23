@@ -22,6 +22,14 @@ class BooksController extends Controller
     function add(Request $request)
     {
         try {
+            $validatedData = $request->validate([
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'title' => 'required|string|max:255',
+                'author' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'rating' => 'nullable|numeric|min:0|max:5',
+            ]);
+
             $imagePath = '';
 
             if ($request->hasFile('image')) {
@@ -30,18 +38,17 @@ class BooksController extends Controller
                 $imagePath = 'images/' . $imageName;
             }
 
-            $data = [
-                'cover' => $imagePath ? $imagePath : '',
-                'title' => $request->title,
-                'author' => $request->author,
-                'description' => $request->description,
-                'rating' => $request->rating,
-            ];
+            Books::create([
+                'cover' => $imagePath,
+                'title' => $validatedData['title'],
+                'author' => $validatedData['author'],
+                'description' => $validatedData['description'],
+                'rating' => $validatedData['rating'],
+            ]);
 
-            Books::create($data);
-            session()->flash('success', 'Data add successfully');
+            return redirect()->back()->with('success', 'Data added successfully');
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
         return redirect()->route('books');
@@ -63,19 +70,27 @@ class BooksController extends Controller
     function edit(Request $request, $id_books)
     {
         try {
+            $validatedData = $request->validate([
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'title' => 'required|string|max:255',
+                'author' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'rating' => 'nullable|numeric|min:0|max:5',
+            ]);
+
+            $book = Books::findOrFail($id_books);
 
             $data = [
-                'title' => $request->title,
-                'author' => $request->author,
-                'description' => $request->description,
-                'rating' => $request->rating,
+                'title' => $validatedData['title'],
+                'author' => $validatedData['author'],
+                'description' => $validatedData['description'],
+                'rating' => $validatedData['rating'],
             ];
 
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-
-                $book = Books::findOrFail($id_books);
-
-                Storage::disk('public')->delete($book->cover);
+                if ($book->cover) {
+                    Storage::disk('public')->delete($book->cover);
+                }
 
                 $imageName = time() . '.' . $request->image->extension();
                 $request->image->storeAs('images', $imageName, 'public');
@@ -84,11 +99,11 @@ class BooksController extends Controller
                 $data['cover'] = $imagePath;
             }
 
-            Books::where('id_books', $id_books)->update($data);
-            session()->flash('success', 'Data update successfully');
+            $book->update($data);
+
+            return redirect()->back()->with('success', 'Data updated successfully');
         } catch (\Exception $e) {
-            return $e->getMessage();
-            session()->flash('error', $e->getMessage());
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
         return redirect()->route('books');

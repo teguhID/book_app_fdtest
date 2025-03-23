@@ -136,11 +136,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="description" id="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        <textarea name="description" id="description" required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                        <input type="number" name="rating" min="0" max="5" step="0.1" id="rating" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating <small>range dari 0.0 - 5.0</small></label>
+                        <input type="number" name="rating" min="0" max="5" step="0.1" id="rating" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onchange="this.value = Math.min(Math.max(parseFloat(this.value) || 0, 0), 5).toFixed(1)">
                     </div>
                 </form>
             </div>
@@ -191,11 +191,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="description" id="description-edit" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        <textarea name="description" id="description-edit" required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                        <input type="number" name="rating" min="0" max="5" step="0.1" id="rating-edit" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating <small>range dari 0.0 - 5.0</small></label>
+                        <input type="number" name="rating" min="0" max="5" step="0.1" id="rating-edit" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onchange="this.value = Math.min(Math.max(parseFloat(this.value) || 0, 0), 5).toFixed(1)">
                     </div>
                 </form>
             </div>
@@ -279,6 +279,27 @@
             });
         });
 
+        function validateRating(input) {
+            let value = input.value;
+
+    // Jika input kosong, biarkan kosong
+    if (value === "") return;
+
+    // Konversi ke angka float
+    value = parseFloat(value);
+
+    // Batasi angka agar tetap dalam rentang 0.0 - 5.0
+    if (value < 0) {
+        value = 0.0;
+    } else if (value > 5) {
+        value = 5.0;
+    }
+
+    // Pastikan hanya memiliki satu angka desimal
+    input.value = value.toFixed(1);
+        }
+
+        
         function showModalAdd(){
             $('#modal-add').removeClass('hidden');
             setTimeout(function() {
