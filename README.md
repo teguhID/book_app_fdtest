@@ -45,6 +45,8 @@ Copy `.env.example` to `.env`:
 cp .env.example .env
 ```
 
+Then adjust your environment
+
 Update the `.env` file with your database credentials.
 
 ### 4. Generate Application Key
@@ -53,13 +55,21 @@ Update the `.env` file with your database credentials.
 php artisan key:generate
 ```
 
-### 5. Run Migrations and Seed Database
+### 5. Create Database, Run Migrations, and Seed Database
+
+Create empty database in your db
 
 ```sh
 php artisan migrate --seed
 ```
 
-### 6. Start the Development Server
+### 6. Link Storage
+
+```sh
+php artisan storage:link
+```
+
+### 7. Start the Development Server
 
 ```sh
 php artisan serve
